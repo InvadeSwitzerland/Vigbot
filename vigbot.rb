@@ -88,14 +88,6 @@ bot.mention do |event| #sends a pm when mentioned
 	vigLog(bot, event.user.name + " mentioned me at " + getTime)
 end
 
-if Time.new(2018, 1, 19, 12, 0, 0) = getTime # a slop of code
-	bot.send_message(349606256895459330, "send me a music video")
-end
-
-if Time.new(2018, 1, 18, 2, 20, 0) = getTime # a test
-	bot.send_message(323992097231208450, "haha")
-end 
-
 bot.command :help do |event|
 	event << 'Availiable commands:'
 	event << 'coinflip: flips a coin'
