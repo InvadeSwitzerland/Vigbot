@@ -24,7 +24,7 @@ end
 
 bot.command :joke do |event| #sends a random jokes 
 	vigLog(bot, event.user.name + " generated a joke at " + getTime)
-	event.respond getJoke()
+	event.respond getJoke
 end
 
 bot.command :relaunch do |event| #Launches another bot then kills this one so updated code is used. 
@@ -74,11 +74,11 @@ bot.command :teamviewer do |event| #Launches Team Viewer
 	end
 	event.respond "TeamViewer is launching."
 	vigLog(bot, event.user.name + " launched Team Viewer at " + getTime)
-	`start teamviewer.lnk` #for this to properly run you need a shortcut to Teamviewer in the same directory
+	`start teamviewer.lnk` #for this to properly run you need a shortcut to Team Viewer in the same directory
 end
 
 bot.command :vig do |event| #Sends a generated Vig Name
-	hold = vigGen()
+	hold = vigGen
 	event.respond hold
 	vigLog(bot, event.user.name + " generated " + hold + " at " + getTime)
 end
@@ -103,12 +103,12 @@ bot.command :help do |event|
 	vigLog(bot, event.user.name + " executed help at " + getTime)
 end
 
-def getJoke()
+def getJoke
 	jokes = ["19 and 20 got into a fight. 21", "A man is washing a car with his son.\n\nThe son asks, \"Dad, can't you just use a sponge?\"", "What's the difference between a well dressed man on a unicycle and a poorly dressed man on a bike?\n\nAttire", "Me and my girlfriend watched three DVDs back to back last night.\n\nLuckily I was the one facing the TV.", "Where do sick boats go?\n\nThe Dock", "Two hunters are out in the woods when one of them collapses. He doesn't seem to be breathing and his eyes are glazed. The other guy whips out his phone and calls 911. He gasps, \"My friend is dead! What can I do?\" The operator says \"Calm down. I can help. First, let's make sure he's dead.\" There is a silence; then a gun shot is heard. Back on the phone, the guy says \"OK, now what?\"", "Why do the Norwegian navy put barcodes on the side of their ships?\n\nSo they can Scandinavian", "Which tea is the hardest to swallow?\n\nReality", "Eric Cheung", "What's green, fuzzy, has four legs, and if it falls out of a tree it will kill you?\n\nA pool table.", "Why don't ants get sick?\n\nbecause they have little anty-bodies.", "What sound do a sheep, a drum, and a snake make when they fall off a cliff and hit the bottom?\n\nBa dum tiss.", "A SQL query goes into a bar, walks up to two tables and asks, \"Can I join you?\"", "[\"hip\",\"hip\"]\n\n(hip hip array!)", "http://longestjokeintheworld.com/"]
-	return jokes[Random.rand((jokes.length()))]
+	return jokes.sample
 end
 
-def vigGen()
+def vigGen
 	return (get_line_from_file("V.txt", Random.rand(1..6816)).strip + " " + get_line_from_file("T.txt", Random.rand(1..25228)).strip).downcase #hardcode the random values because the files won't be changing
 end
 
@@ -151,7 +151,11 @@ end
 
 def sororityGen
 	greek = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega"]
-	return greek[Random.rand(greek.length())] + " " + greek[Random.rand(greek.length())] + " " + greek[Random.rand(greek.length())]
+	if Random.rand(2) == 1
+		return greek.sample + " " + greek.sample
+	else
+		return greek.sample + " " + greek.sample + " " + greek.sample
+	end
 end
 
 def vigLog(bot, log) #used to log the bots events, it both outputs to console and messages a channel.
