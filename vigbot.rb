@@ -4,7 +4,7 @@ require 'open-uri'
 require 'yaml'
 
 CONFIG = YAML.load_file('config.yaml')
-#TODO: Make vigbot pull github code on relaunch, Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
+#TODO: Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
 bot = Discordrb::Commands::CommandBot.new token: CONFIG['token'], client_id: 380386261988540426, prefix: '!'
 puts "https://discordapp.com/oauth2/authorize?client_id=380386261988540426&scope=bot" #The link to add Viggy bot to servers
 ADMINS = [349606256895459330] #Save the ID of users that can preform elevated commands
@@ -33,12 +33,13 @@ bot.command :joke do |event| #sends a random jokes
 	event.respond getJoke
 end
 
-bot.command :relaunch do |event| #Launches another bot then kills this one so updated code is used. 
-	puts ADMINS.include? event.user.id
+bot.command :relaunch do |event| #Launches another bot then kills this one so updated code is used. This now pulls updated code from github.
 	if not ADMINS.include? event.user.id
 		event.respond "User " + event.user.name + " lacks sufficient permissions to relaunch vigbot."
 		break
 	end
+	event.respond "Pulling code from Github."
+	`git pull origin master` #Still unsure if this waits for the pull to finish before relaunching, probably not.
 	event.respond "Relaunching Vigbot."
 	vigLog(bot, event.user.name + " triggered relaunch at " + getTime)
 	`start vigbot.rb` #for this to properly run you need a shortcut to Teamviewer in the same directory
