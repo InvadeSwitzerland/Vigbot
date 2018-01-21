@@ -1,10 +1,13 @@
+::RBNACL_LIBSODIUM_GEM_LIB_PATH = "/libsodium.dll" #libsodium is on the gitignore, just download it and put the dll in your vigbot folder
 require 'discordrb'
 require 'open-uri'
-#TODO: Convert Admin to an array, Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
-bot_token = 'your token goes here'
-bot = Discordrb::Commands::CommandBot.new token: bot_token, client_id: 380386261988540426, prefix: '!'
+require 'yaml'
+
+CONFIG = YAML.load_file('config.yaml')
+#TODO: Make vigbot pull github code on relaunch, Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
+bot = Discordrb::Commands::CommandBot.new token: CONFIG['token'], client_id: 380386261988540426, prefix: '!'
 puts "https://discordapp.com/oauth2/authorize?client_id=380386261988540426&scope=bot" #The link to add Viggy bot to servers
-admin = 349606256895459330 #save my user id for elevate privilege commands
+ADMINS = [349606256895459330] #Save the ID of users that can preform elevated commands
 vigLogEnable = true #used to turn vigLog on and off
 
 bot.message do |event| #what it does whenever any message is sent
@@ -16,7 +19,10 @@ bot.command :coinflip do |event| #Flips a coin
 end
 
 bot.command :exit do |event| #Allows admin to turn the bot off
-	break unless event.user.id == admin # Replace number with your ID
+	if not ADMINS.include? event.user.id
+		event.respond "User " + event.user.name + " lacks sufficient permissions to turn off vigbot."
+		break
+	end
 	event.respond "Viggy Bot is shutting down."
 	vigLog(bot, event.user.name + " shut the Viggy Bot down at " + getTime)
 	exit
@@ -28,8 +34,9 @@ bot.command :joke do |event| #sends a random jokes
 end
 
 bot.command :relaunch do |event| #Launches another bot then kills this one so updated code is used. 
-	if event.user.id != admin
-		event.respond "User " + event.user.name + " lacks sufficient permissions to launch Team Viewer."
+	puts ADMINS.include? event.user.id
+	if not ADMINS.include? event.user.id
+		event.respond "User " + event.user.name + " lacks sufficient permissions to relaunch vigbot."
 		break
 	end
 	event.respond "Relaunching Vigbot."
@@ -58,8 +65,8 @@ bot.command :sorority do |event| #generates the name of a sorority
 end
 
 bot.command :systemdown do |event| #shuts off the host computer using the shutdown command 
-	if event.user.id != admin
-		event.user.name + " lacks sufficient permissions to shut the system down."
+	if not ADMINS.include? event.user.id
+		event.respond "User " + event.user.name + " lacks sufficient permissions to shut the system down."
 		break
 	end
 	event.respond "System going offline"
@@ -68,8 +75,8 @@ bot.command :systemdown do |event| #shuts off the host computer using the shutdo
 end
 
 bot.command :teamviewer do |event| #Launches Team Viewer
-	if event.user.id != admin
-		event.respond "User " + event.user.name + " lacks sufficient permissions to launch Team Viewer."
+	if not ADMINS.include? event.user.id
+		event.respond "User " + event.user.name + " lacks sufficient permissions to launch Team Viewer"
 		break
 	end
 	event.respond "TeamViewer is launching."
