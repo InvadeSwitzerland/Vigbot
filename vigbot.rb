@@ -10,6 +10,20 @@ puts "https://discordapp.com/oauth2/authorize?client_id=380386261988540426&scope
 ADMINS = [349606256895459330] #Save the ID of users that can preform elevated commands
 vigLogEnable = true #used to turn vigLog on and off
 
+bot.message do |event|
+	sentmessage = event.message
+	if sentmessage.attachments.length != 0
+		vigLog(bot, 'found attachment')
+		if sentmessage.attachments[0].filename.downcase.end_with?('.py')
+			File.open('vids/vid.py', "wb") do |file|
+				file.write open(sentmessage.attachments[0].url).read
+			end
+
+			vigLog(bot, 'found .py ' + sentmessage.attachments.length.to_s + ' ' + getTime)
+		end
+	end
+end
+
 bot.message do |event| #what it does whenever any message is sent, currently detecting fifteen letter words in messages
 	sentence = event.message.to_s #get the message and make sure you convert it to a string
 	sentence += " " # add space to the end so it detects word on the end
