@@ -10,7 +10,25 @@ puts "https://discordapp.com/oauth2/authorize?client_id=380386261988540426&scope
 ADMINS = [349606256895459330] #Save the ID of users that can preform elevated commands
 vigLogEnable = true #used to turn vigLog on and off
 
-bot.message do |event| #what it does whenever any message is sent
+bot.message do |event| #what it does whenever any message is sent, currently detecting fifteen letter words in messages
+	sentence = event.message.to_s #get the message and make sure you convert it to a string
+	sentence += " " # add space to the end so it detects word on the end
+	take = [".", "!", "?", ",", "'", "\"", "/", "\\", ":", ";"] #items to remove from the string for formatting purposes
+	take.each do |remove|
+		sentence = sentence.tr(remove, "")
+	end
+	word_hold = ""
+	sentence.each_char do |i|
+		if i != " " #and i != "." and i != "!" and i != i and i != "," and i != "?"
+			word_hold += i
+		else
+			if word_hold.length == 15
+				vigLog(bot, "Fifteen letter word " + word_hold + " detected")
+				event.respond "Fifteen letter word detected: " + word_hold
+			end
+			word_hold = ""
+		end
+	end
 end
 
 bot.command :coinflip do |event| #Flips a coin
