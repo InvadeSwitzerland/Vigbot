@@ -13,13 +13,13 @@ vigLogEnable = true #used to turn vigLog on and off
 bot.message do |event|
 	sentmessage = event.message
 	if sentmessage.attachments.length != 0
-		vigLog(bot, 'found attachment')
-		if sentmessage.attachments[0].filename.downcase.end_with?('.py')
-			File.open('vids/vid.py', "wb") do |file|
+		extensions = ['.mov','.mp4','.mpeg4','.avi','.wmv','.flv','.3gp','.mpegps','.webm']
+		nameoffile = sentmessage.attachments[0].filename.downcase
+		if nameoffile.end_with?(*extensions)
+			vigLog(bot, 'Found video attachment at ' + getTime)
+			File.open('vids/' + nameoffile, "wb") do |file|
 				file.write open(sentmessage.attachments[0].url).read
 			end
-
-			vigLog(bot, 'found .py ' + sentmessage.attachments.length.to_s + ' ' + getTime)
 		end
 	end
 end
