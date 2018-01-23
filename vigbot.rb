@@ -19,7 +19,7 @@ bot.message do |event|
 				file.write open(sentmessage.attachments[0].url).read
 			end
 
-			vigLog(bot, 'found .py ' + sentmessage.attachments.length.to_s + ' ' + getTime)
+			vigLog(bot, 'Found .py ' + sentmessage.attachments.length.to_s + ' from ' + event.user.name + ' at ' + getTime)
 		end
 	end
 end
@@ -33,12 +33,12 @@ bot.message do |event| #what it does whenever any message is sent, currently det
 	end
 	word_hold = ""
 	sentence.each_char do |i|
-		if i != " " #and i != "." and i != "!" and i != i and i != "," and i != "?"
+		if i != " " 
 			word_hold += i
 		else
 			if word_hold.length == 15
-				vigLog(bot, "Fifteen letter word " + word_hold + " detected")
-				event.respond "Fifteen letter word detected: " + word_hold
+				vigLog(bot, "Fifteen letter string " + word_hold + " detected")
+				event.respond "Fifteen letter string detected: " + word_hold
 			end
 			word_hold = ""
 		end
@@ -47,7 +47,7 @@ end
 
 bot.command :coinflip do |event| #Flips a coin
 	event.respond coinflip
-	vigLog(bot, event.user.name + " flipped a coin at " + getTime)
+	vigLog(bot, event.user.name + ' flipped a coin at ' + getTime)
 end
 
 bot.command :exit do |event| #Allows admin to turn the bot off
@@ -56,12 +56,12 @@ bot.command :exit do |event| #Allows admin to turn the bot off
 		break
 	end
 	event.respond "Viggy Bot is shutting down."
-	vigLog(bot, event.user.name + " shut the Viggy Bot down at " + getTime)
+	vigLog(bot, event.user.name + ' shut the Viggy Bot down at ' + getTime)
 	exit
 end
 
 bot.command :joke do |event| #sends a random jokes 
-	vigLog(bot, event.user.name + " generated a joke at " + getTime)
+	vigLog(bot, event.user.name + ' generated a joke at ' + getTime)
 	event.respond getJoke
 end
 
@@ -73,14 +73,14 @@ bot.command :relaunch do |event| #Launches another bot then kills this one so up
 	event.respond "Pulling code from Github."
 	`git pull origin master` #Still unsure if this waits for the pull to finish before relaunching, probably not.
 	event.respond "Relaunching Vigbot."
-	vigLog(bot, event.user.name + " triggered relaunch at " + getTime)
+	vigLog(bot, event.user.name + ' triggered relaunch at ' + getTime)
 	`start vigbot.rb` #for this to properly run you need a shortcut to Teamviewer in the same directory
 	exit
 end
 
 bot.command :roll do |event| #Rolls a six sided die
 	event.respond (1 + Random.rand(6))
-	vigLog(bot, event.user.name + " rolled a die at " + getTime)
+	vigLog(bot, event.user.name + ' rolled a die at ' + getTime)
 end
 
 bot.command :schoolclosed? do |event| #uses the isClosed method to check if school is closed. 
@@ -89,12 +89,12 @@ bot.command :schoolclosed? do |event| #uses the isClosed method to check if scho
 	else
 		event.respond "School is not closed."
 	end
-	vigLog(bot, event.user.name + " checked for school closing at " + getTime)
+	vigLog(bot, event.user.name + ' checked for school closing at ' + getTime)
 end
 
 bot.command :sorority do |event| #generates the name of a sorority 
 	event.respond sororityGen
-	vigLog(bot, event.user.name + " generated a sorority at " + getTime)
+	vigLog(bot, event.user.name + ' generated a sorority at ' + getTime)
 end
 
 bot.command :systemdown do |event| #shuts off the host computer using the shutdown command 
@@ -103,7 +103,7 @@ bot.command :systemdown do |event| #shuts off the host computer using the shutdo
 		break
 	end
 	event.respond "System going offline"
-	vigLog(bot, event.user.name + " shut down at " + getTime)
+	vigLog(bot, event.user.name + ' shut down at ' + getTime)
 	`shutdown /r /t 0`
 end
 
@@ -113,19 +113,19 @@ bot.command :teamviewer do |event| #Launches Team Viewer
 		break
 	end
 	event.respond "TeamViewer is launching."
-	vigLog(bot, event.user.name + " launched Team Viewer at " + getTime)
+	vigLog(bot, event.user.name + ' launched Team Viewer at ' + getTime)
 	`start teamviewer.lnk` #for this to properly run you need a shortcut to Team Viewer in the same directory
 end
 
 bot.command :vig do |event| #Sends a generated Vig Name
 	hold = vigGen
 	event.respond hold
-	vigLog(bot, event.user.name + " generated " + hold + " at " + getTime)
+	vigLog(bot, event.user.name + ' generated ' + hold + ' at ' + getTime)
 end
 
 bot.mention do |event| #sends a pm when mentioned
 	event.user.pm("Leave me the fuck alone " + event.user.name + "!")
-	vigLog(bot, event.user.name + " mentioned me at " + getTime)
+	vigLog(bot, event.user.name + ' mentioned me at ' + getTime)
 end
 
 bot.command :help do |event|
@@ -140,7 +140,7 @@ bot.command :help do |event|
 	event << 'systemdown: shuts down the host computer*'
 	event << 'teamviewer: launches Teamviewer*'
 	event << 'vig: generates a name for Viggy'
-	vigLog(bot, event.user.name + " executed help at " + getTime)
+	vigLog(bot, event.user.name + ' executed help at ' + getTime)
 end
 
 def getJoke
