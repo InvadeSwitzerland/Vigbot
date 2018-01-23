@@ -107,6 +107,11 @@ bot.command :systemdown do |event| #shuts off the host computer using the shutdo
 	`shutdown /r /t 0`
 end
 
+bot.command :systemofadown do |event|
+	event.respond getSOAD
+	vigLog(bot, event.user.name + " hit a sick beat! at " + getTime)
+end
+
 bot.command :teamviewer do |event| #Launches Team Viewer
 	if not ADMINS.include? event.user.id
 		event.respond "User " + event.user.name + " lacks sufficient permissions to launch Team Viewer"
@@ -138,6 +143,7 @@ bot.command :help do |event|
 	event << 'schoolclosed?: checks if school is closed.'
 	event << 'sorority: generates a sorority name'
 	event << 'systemdown: shuts down the host computer*'
+	event << 'systemofadown: generates a lyric'
 	event << 'teamviewer: launches Teamviewer*'
 	event << 'vig: generates a name for Viggy'
 	vigLog(bot, event.user.name + " executed help at " + getTime)
@@ -146,6 +152,11 @@ end
 def getJoke
 	jokes = ["19 and 20 got into a fight. 21", "A man is washing a car with his son.\n\nThe son asks, \"Dad, can't you just use a sponge?\"", "What's the difference between a well dressed man on a unicycle and a poorly dressed man on a bike?\n\nAttire", "Me and my girlfriend watched three DVDs back to back last night.\n\nLuckily I was the one facing the TV.", "Where do sick boats go?\n\nThe Dock", "Two hunters are out in the woods when one of them collapses. He doesn't seem to be breathing and his eyes are glazed. The other guy whips out his phone and calls 911. He gasps, \"My friend is dead! What can I do?\" The operator says \"Calm down. I can help. First, let's make sure he's dead.\" There is a silence; then a gun shot is heard. Back on the phone, the guy says \"OK, now what?\"", "Why do the Norwegian navy put barcodes on the side of their ships?\n\nSo they can Scandinavian", "Which tea is the hardest to swallow?\n\nReality", "Eric Cheung", "What's green, fuzzy, has four legs, and if it falls out of a tree it will kill you?\n\nA pool table.", "Why don't ants get sick?\n\nbecause they have little anty-bodies.", "What sound do a sheep, a drum, and a snake make when they fall off a cliff and hit the bottom?\n\nBa dum tiss.", "A SQL query goes into a bar, walks up to two tables and asks, \"Can I join you?\"", "[\"hip\",\"hip\"]\n\n(hip hip array!)", "http://longestjokeintheworld.com/"]
 	return jokes.sample
+end
+
+def getSOAD
+	soad = ["Banana, banana, banana, terracotta, banana, terracotta, terracotta pie!", "I hope your stepson doesn't eat the fish", "What a splendid pie! Pizza pizza pie!", "Wired were the eyes of a horse on a jet pilot", "My cock is much bigger than yours / My cock can walk right through the door", "Mind delusions acquainted / Bubbles erotica / Plutonium wedding rings / Icicles stretching / Bicycles, shoestrings / One flag, flaggy but one / Painting the paintings of the alive."]
+	return soad.sample
 end
 
 def vigGen
