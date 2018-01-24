@@ -92,6 +92,10 @@ bot.command :schoolclosed? do |event| #uses the isClosed method to check if scho
   vigLog(bot, event.user.name + ' checked for school closing at ' + getTime)
 end
 
+bot.command :somethingToRead do |event| #Returns the url of something to read. Note: I want to develop the list a bit more before I add it to help or make people aware of it. 
+  event.respond somethingToRead
+end
+
 bot.command :sorority do |event| #generates the name of a sorority 
   event.respond sororityGen
   vigLog(bot, event.user.name + ' generated a sorority at ' + getTime)
@@ -149,6 +153,14 @@ bot.command :help do |event|
   vigLog(bot, event.user.name + ' executed help at ' + getTime)
 end
 
+def coinflip
+  if Random.rand(2) == 1
+    return "Heads"
+  else
+    return "Tails"
+  end
+end
+
 def getJoke
   jokes = ["19 and 20 got into a fight. 21", "A man is washing a car with his son.\n\nThe son asks, \"Dad, can't you just use a sponge?\"", "What's the difference between a well dressed man on a unicycle and a poorly dressed man on a bike?\n\nAttire", "Me and my girlfriend watched three DVDs back to back last night.\n\nLuckily I was the one facing the TV.", "Where do sick boats go?\n\nThe Dock", "Two hunters are out in the woods when one of them collapses. He doesn't seem to be breathing and his eyes are glazed. The other guy whips out his phone and calls 911. He gasps, \"My friend is dead! What can I do?\" The operator says \"Calm down. I can help. First, let's make sure he's dead.\" There is a silence; then a gun shot is heard. Back on the phone, the guy says \"OK, now what?\"", "Why do the Norwegian navy put barcodes on the side of their ships?\n\nSo they can Scandinavian", "Which tea is the hardest to swallow?\n\nReality", "Eric Cheung", "What's green, fuzzy, has four legs, and if it falls out of a tree it will kill you?\n\nA pool table.", "Why don't ants get sick?\n\nbecause they have little anty-bodies.", "What sound do a sheep, a drum, and a snake make when they fall off a cliff and hit the bottom?\n\nBa dum tiss.", "A SQL query goes into a bar, walks up to two tables and asks, \"Can I join you?\"", "[\"hip\",\"hip\"]\n\n(hip hip array!)", "http://longestjokeintheworld.com/"]
   return jokes.sample
@@ -159,24 +171,19 @@ def getSOAD
   return soad.sample
 end
 
-def vigGen
-  return (get_line_from_file("V.txt", Random.rand(1..6816)).strip + " " + get_line_from_file("T.txt", Random.rand(1..25228)).strip).downcase #hardcode the random values because the files won't be changing
+def getTime
+  return Time.new.inspect
 end
 
 def getUsers(bot)
   return bot.users
 end
 
-def coinflip
-  if Random.rand(2) == 1
-    return "Heads"
-  else
-    return "Tails"
-  end
+def vigGen
+  return (get_line_from_file("V.txt", Random.rand(1..6816)).strip + " " + get_line_from_file("T.txt", Random.rand(1..25228)).strip).downcase #hardcode the random values because the files won't be changing
 end
 
-#Used by viggen to read from a random line
-def get_line_from_file(path, line) 
+def get_line_from_file(path, line) #Used by viggen to read from a random line
   result = nil
   File.open(path, "r") do |f|
     while line > 0
@@ -187,10 +194,6 @@ def get_line_from_file(path, line)
   return result
 end
 
-def getTime
-  return Time.new.inspect
-end
-
 def isClosed(school) #gets the html from KMBC's closing list as a string and checks to see if the district name is in it anywhere, depends on open-uri
   closings = open('http://www.kmbc.com/weather/closings', &:read)
   if closings.include? school
@@ -198,6 +201,11 @@ def isClosed(school) #gets the html from KMBC's closing list as a string and che
   else 
     return false
   end
+end
+
+def somethingToRead #Just returns urls from an array
+  readingList = ["Eight reasons to visit Kansas City: https://www.visitkc.com/visitors/things-do/attractions/top-reasons-visit-kansas-city", "East Coast-West Coast hip hop rivalry https://en.wikipedia.org/wiki/East_Coast%E2%80%93West_Coast_hip_hop_rivalry", "Ankole-Watusi: http://www.ansi.okstate.edu/breeds/cattle/ankolewatusi/", "Legal analysis of Jay-Z's 99 Problems: http://pdf.textfiles.com/academics/lj56-2_mason_article.pdf", "Can I own a pet fox?: https://www.popsci.com/g00/science/article/2012-10/fyi-domesticated-foxes"]
+  return readingList.sample
 end
 
 def sororityGen
