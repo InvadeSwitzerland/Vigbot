@@ -37,7 +37,7 @@ bot.message do |event| #what it does whenever any message is sent, currently det
       word_hold += i
     else
       if word_hold.length == 15
-        vigLog(bot, ' Fifteen letter string ' + word_hold.downcase + ' detected')
+        vigLog(bot, 'Fifteen letter string ' + word_hold + ' detected')
         event.respond 'Fifteen letter string detected: ' + word_hold
       end
       word_hold = ""
