@@ -65,6 +65,11 @@ bot.command :joke do |event| #sends a random jokes
   event.respond getJoke
 end
 
+bot.command :reading do |event| #Returns the url of something to read. Note: I want to develop the list a bit more before I add it to help or make people aware of it. 
+  event.respond somethingToRead
+  vigLog(bot, event.user.name + " requested something to read at " + getTime)
+end
+
 bot.command :relaunch do |event| #Launches another bot then kills this one so updated code is used. This now pulls updated code from github.
   if not ADMINS.include? event.user.id
     event.respond "User " + event.user.name + " lacks sufficient permissions to relaunch vigbot."
@@ -90,10 +95,6 @@ bot.command :schoolclosed? do |event| #uses the isClosed method to check if scho
     event.respond "School is not closed."
   end
   vigLog(bot, event.user.name + ' checked for school closing at ' + getTime)
-end
-
-bot.command :somethingToRead do |event| #Returns the url of something to read. Note: I want to develop the list a bit more before I add it to help or make people aware of it. 
-  event.respond somethingToRead
 end
 
 bot.command :sorority do |event| #generates the name of a sorority 
