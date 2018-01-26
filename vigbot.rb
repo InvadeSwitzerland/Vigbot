@@ -1,7 +1,8 @@
-::RBNACL_LIBSODIUM_GEM_LIB_PATH = "/libsodium.dll" #libsodium is on the gitignore, just download it and put the dll in your vigbot folder
+#::RBNACL_LIBSODIUM_GEM_LIB_PATH = "/libsodium.dll" #libsodium is on the gitignore, just download it and put the dll in your vigbot folder
 require 'discordrb'
 require 'open-uri'
 require 'yaml'
+require_relative 'youtubestuff/uptoyoutube'
 
 CONFIG = YAML.load_file('config.yaml')
 #TODO: Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
@@ -16,10 +17,23 @@ bot.message do |event|
     extensions = ['.mov','.mp4','.mpeg4','.avi','.wmv','.flv','.3gp','.mpegps','.webm']
     nameoffile = sentmessage.attachments[0].filename.downcase
     if nameoffile.end_with?(*extensions)
-      vigLog(bot, ' Found video attachment at ' + getTime)
+      vigLog(bot, 'Found video attachment at ' + getTime)
       File.open('vids/' + nameoffile, "wb") do |file|
         file.write open(sentmessage.attachments[0].url).read
       end
+      i = 0
+      begin
+        result = Samples::YouTube.new.upload('vids/' + nameoffile, 'title')
+        vigLog(bot, 'https://www.youtube.com/watch?v=' + result.id)
+      rescue Errno::ETIMEDOUT, NoMethodError
+        if i < 5
+          i += 1
+          vigLog(bot, 'failed, trying again')
+          retry
+        end
+        vigLog(bot, 'tried 5 times')
+      end
+      File.delete('vids/' + nameoffile)
     end
   end
 end
