@@ -172,7 +172,7 @@ def coinflip
   if Random.rand(2) == 1
     return "Heads"
   else
-    return "Tails"
+    return ":tails:"
   end
 end
 
