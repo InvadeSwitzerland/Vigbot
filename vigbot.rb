@@ -1,4 +1,4 @@
-#::RBNACL_LIBSODIUM_GEM_LIB_PATH = "/libsodium.dll" #libsodium is on the gitignore, just download it and put the dll in your vigbot folder
+::RBNACL_LIBSODIUM_GEM_LIB_PATH = "/libsodium.dll" #libsodium is on the gitignore, just download it and put the dll in your vigbot folder
 require 'discordrb'
 require 'open-uri'
 require 'yaml'
@@ -15,25 +15,25 @@ bot.message do |event|
   sentmessage = event.message
   if sentmessage.attachments.length != 0
     extensions = ['.mov','.mp4','.mpeg4','.avi','.wmv','.flv','.3gp','.mpegps','.webm']
-    nameoffile = sentmessage.attachments[0].filename.downcase
-    if nameoffile.end_with?(*extensions)
+    name_of_file = sentmessage.attachments[0].filename.downcase
+    if name_of_file.end_with?(*extensions)
       vigLog(bot, 'Found video attachment at ' + getTime)
-      File.open('vids/' + nameoffile, "wb") do |file|
+      File.open('vids/' + name_of_file, "wb") do |file|
         file.write open(sentmessage.attachments[0].url).read
       end
       i = 0
       begin
-        result = Samples::YouTube.new.upload('vids/' + nameoffile, 'title')
+        result = Samples::YouTube.new.upload('vids/' + name_of_file, 'title')
         vigLog(bot, 'https://www.youtube.com/watch?v=' + result.id)
       rescue Errno::ETIMEDOUT, NoMethodError
         if i < 5
           i += 1
-          vigLog(bot, 'failed, trying again')
+          vigLog(bot, 'Failed, trying again.')
           retry
         end
-        vigLog(bot, 'tried 5 times')
+        vigLog(bot, 'Attempted 5 times.')
       end
-      File.delete('vids/' + nameoffile)
+      File.delete('vids/' + name_of_file)
     end
   end
 end
@@ -51,7 +51,7 @@ bot.message do |event| #what it does whenever any message is sent, currently det
       word_hold += i
     else
       if word_hold.length == 15
-        vigLog(bot, 'Fifteen letter string ' + word_hold + ' detected')
+        vigLog(bot, 'Fifteen letter string ' + word_hold + ' detected.')
         event.respond 'Fifteen letter string detected: ' + word_hold
       end
       word_hold = ""
@@ -62,6 +62,16 @@ end
 bot.command :coinflip do |event| #Flips a coin
   event.respond coinflip
   vigLog(bot, event.user.name + ' flipped a coin at ' + getTime)
+end
+
+bot.command :closediscord do |event| #Allows me to close Discord remotely so I get all my notifications
+  if not ADMINS.include? event.user.id
+    event.respond "User " + event.user.name + " lacks sufficient permissions to close the active Discord session."
+    break
+  end
+  event.respond "Closing Discord."
+  `taskkill /f /im discord.exe`
+  vigLog(bot, event.user.name + ' closed Discord at ' + getTime)
 end
 
 bot.command :exit do |event| #Allows admin to turn the bot off
@@ -152,27 +162,33 @@ bot.mention do |event| #sends a pm when mentioned
   vigLog(bot, event.user.name + ' mentioned me at ' + getTime)
 end
 
-bot.command :help do |event|
+bot.command :help do |event| #Used to display commands that a regular user can preform
   event << 'Availiable commands:'
   event << 'coinflip: flips a coin'
-  event << 'exit: turns the bot off*'
   event << 'joke: generates a random joke'
-  event << 'relaunch: reboots vigbot*'
   event << 'roll: rolls a six sided die'
   event << 'schoolclosed?: checks if school is closed.'
   event << 'sorority: generates a sorority name'
-  event << 'systemdown: shuts down the host computer*'
   event << 'systemofadown: generates a lyric'
-  event << 'teamviewer: launches Teamviewer*'
   event << 'vig: generates a name for Viggy'
   vigLog(bot, event.user.name + ' executed help at ' + getTime)
+end
+
+bot.command :ahelp do |event| #Used to display commands that only admins can preform.
+  event << 'Availiable admin commands:'
+  event << 'closediscord: closes the Discord session.'
+  event << 'exit: turns the bot off'
+  event << 'relaunch: reboots vigbot'
+  event << 'systemdown: shuts down the host computer'
+  event << 'teamviewer: launches Teamviewer'
+  vigLog(bot, event.user.name + ' executed admin help at ' + getTime)
 end
 
 def coinflip
   if Random.rand(2) == 1
     return "Heads"
   else
-    return ":tails:"
+    return "Tails"
   end
 end
 
@@ -219,7 +235,7 @@ def isClosed(school) #gets the html from KMBC's closing list as a string and che
 end
 
 def somethingToRead #Just returns urls from an array
-  readingList = ["Eight reasons to visit Kansas City: https://www.visitkc.com/visitors/things-do/attractions/top-reasons-visit-kansas-city", "East Coast-West Coast hip hop rivalry https://en.wikipedia.org/wiki/East_Coast%E2%80%93West_Coast_hip_hop_rivalry", "Ankole-Watusi: http://www.ansi.okstate.edu/breeds/cattle/ankolewatusi/", "Legal analysis of Jay-Z's 99 Problems: http://pdf.textfiles.com/academics/lj56-2_mason_article.pdf", "Can I own a pet fox?: https://www.popsci.com/g00/science/article/2012-10/fyi-domesticated-foxes"]
+  readingList = ["Should you leave your car running in the winter?: https://jalopnik.com/exactly-why-you-need-to-warm-up-your-car-when-its-cold-1821737173", "Eight reasons to visit Kansas City: https://www.visitkc.com/visitors/things-do/attractions/top-reasons-visit-kansas-city", "East Coast-West Coast hip hop rivalry https://en.wikipedia.org/wiki/East_Coast%E2%80%93West_Coast_hip_hop_rivalry", "Ankole-Watusi: http://www.ansi.okstate.edu/breeds/cattle/ankolewatusi/", "Legal analysis of Jay-Z's 99 Problems: http://pdf.textfiles.com/academics/lj56-2_mason_article.pdf", "Can I own a pet fox?: https://www.popsci.com/g00/science/article/2012-10/fyi-domesticated-foxes"]
   return readingList.sample
 end
 
