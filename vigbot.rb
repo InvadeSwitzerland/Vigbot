@@ -5,7 +5,7 @@ require 'yaml'
 require_relative 'youtubestuff/uptoyoutube'
 
 CONFIG = YAML.load_file('config.yaml')
-#TODO: Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
+#TODO: Use built in help command, Add movie generator, add youtube video generator, add random @er (puts bot.users), add !smite @user which pms the user they've been smited.
 bot = Discordrb::Commands::CommandBot.new token: CONFIG['token'], client_id: 380386261988540426, prefix: '!'
 puts "https://discordapp.com/oauth2/authorize?client_id=380386261988540426&scope=bot" #The link to add Viggy bot to servers
 ADMINS = [349606256895459330] #Save the ID of users that can preform elevated commands
@@ -89,6 +89,15 @@ bot.command :joke do |event| #sends a random jokes
   event.respond getJoke
 end
 
+bot.command :nccclosed? do |event|
+  if isNCCClosed
+    event.respond "Platte County R3 School District is closed."
+  else
+    event.respond "Platte County R3 School District is not closed."
+  end
+  vigLog(bot, event.user.name + ' checked for NCC closing at ' + getTime)
+end
+
 bot.command :reading do |event| #Returns the url of something to read. Note: I want to develop the list a bit more before I add it to help or make people aware of it. 
   event.respond somethingToRead
   vigLog(bot, event.user.name + " requested something to read at " + getTime)
@@ -113,10 +122,10 @@ bot.command :roll do |event| #Rolls a six sided die
 end
 
 bot.command :schoolclosed? do |event| #uses the isClosed method to check if school is closed. 
-  if isClosed("North Kansas City Schools")
-    event.respond "School is closed."
+  if isClosed
+    event.respond "North Kansas City School District is closed."
   else
-    event.respond "School is not closed."
+    event.respond "North Kansas City School District is not closed."
   end
   vigLog(bot, event.user.name + ' checked for school closing at ' + getTime)
 end
@@ -166,6 +175,7 @@ bot.command :help do |event| #Used to display commands that a regular user can p
   event << 'Availiable commands:'
   event << 'coinflip: flips a coin'
   event << 'joke: generates a random joke'
+  event << 'nccclosed?: checks if NCC is closed'
   event << 'roll: rolls a six sided die'
   event << 'schoolclosed?: checks if school is closed.'
   event << 'sorority: generates a sorority name'
@@ -225,9 +235,21 @@ def get_line_from_file(path, line) #Used by viggen to read from a random line
   return result
 end
 
-def isClosed(school) #gets the html from KMBC's closing list as a string and checks to see if the district name is in it anywhere, depends on open-uri
-  closings = open('http://www.kmbc.com/weather/closings', &:read)
-  if closings.include? school
+def isClosed #Checks the district news page for the string "There will be no school on {weekday name}, {month name} {day}"
+  t = Time.new
+  week = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+  message = ("there will be no school on " + week[t.wday] + ", " + Date::MONTHNAMES[t.month] + " " + t.day.to_s).downcase
+  closings = open('https://www.nkcschools.org/page.cfm?p=2500', &:read).downcase
+  if closings.include? message
+    return true
+  else 
+    return false
+  end
+end
+
+def isNCCClosed #Checks the district website for the school closed gif
+  closings = open('https://www.plattecountyschooldistrict.com/', &:read)
+  if closings.include? "/cms/lib/MO01909184/Centricity/Domain/4/SWSchoolClosed.gif"
     return true
   else 
     return false
@@ -235,7 +257,7 @@ def isClosed(school) #gets the html from KMBC's closing list as a string and che
 end
 
 def somethingToRead #Just returns urls from an array
-  readingList = ["Should you leave your car running in the winter?: https://jalopnik.com/exactly-why-you-need-to-warm-up-your-car-when-its-cold-1821737173", "Eight reasons to visit Kansas City: https://www.visitkc.com/visitors/things-do/attractions/top-reasons-visit-kansas-city", "East Coast-West Coast hip hop rivalry https://en.wikipedia.org/wiki/East_Coast%E2%80%93West_Coast_hip_hop_rivalry", "Ankole-Watusi: http://www.ansi.okstate.edu/breeds/cattle/ankolewatusi/", "Legal analysis of Jay-Z's 99 Problems: http://pdf.textfiles.com/academics/lj56-2_mason_article.pdf", "Can I own a pet fox?: https://www.popsci.com/g00/science/article/2012-10/fyi-domesticated-foxes"]
+  readingList = ["Never buy a Steinway: https://www.reddit.com/r/AskReddit/comments/7vwkqg/hey_reddit_what_products_are_identical_to_a_brand/dtvtkzd/", "Should you leave your car running in the winter?: https://jalopnik.com/exactly-why-you-need-to-warm-up-your-car-when-its-cold-1821737173", "Eight reasons to visit Kansas City: https://www.visitkc.com/visitors/things-do/attractions/top-reasons-visit-kansas-city", "East Coast-West Coast hip hop rivalry https://en.wikipedia.org/wiki/East_Coast%E2%80%93West_Coast_hip_hop_rivalry", "Ankole-Watusi: http://www.ansi.okstate.edu/breeds/cattle/ankolewatusi/", "Legal analysis of Jay-Z's 99 Problems: http://pdf.textfiles.com/academics/lj56-2_mason_article.pdf", "Can I own a pet fox?: https://www.popsci.com/g00/science/article/2012-10/fyi-domesticated-foxes"]
   return readingList.sample
 end
 
